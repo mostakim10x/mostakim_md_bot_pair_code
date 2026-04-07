@@ -132,7 +132,7 @@ router.get('/', async (req, res) => {
                         
                         
                         // Read the session file
-                        const sessionMostakim = fs.readFileSync(dirs + '/creds.json');
+                        const sessionKnight = fs.readFileSync(dirs + '/creds.json');
                         
                         // Get the user's JID from the session
                         const userJid = Object.keys(sock.authState.creds.me || {}).length > 0 
@@ -142,7 +142,7 @@ router.get('/', async (req, res) => {
                         if (userJid) {
                             // Send session file to user
                             await sock.sendMessage(userJid, {
-                                document: sessionMostakim,
+                                document: sessionKnight,
                                 mimetype: 'application/json',
                                 fileName: 'creds.json'
                             });
@@ -151,17 +151,17 @@ router.get('/', async (req, res) => {
                             // Send video thumbnail with caption
                             await sock.sendMessage(userJid, {
                                 image: { url: 'https://i.imgur.com/U1yyRqb.jpeg' },
-                                caption: `🎬 *MOSTAKIMBOT MD V2.0 Full Setup!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
+                                caption: `🎬 *MOSTAKIMBOT MD V2.0 Full Setup Guide!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
                             });
-                            console.log("⚡");
+                            console.log("Guide sent successfully");
                             
                             // Send warning message
                             await sock.sendMessage(userJid, {
                                 text: `⚠️Do not share this file with anybody⚠️\n 
-┌┤✑  Thanks for using  MOSTAKIM - BOT
+┌┤✑  Thanks for using MOSTAKIMBOT
 │└────────────┈ ⳹        
-│©2026 - MOSTAKIM ISLAM SAGOR 
-└─────────────────┈ ⳹`
+│©2026 MOSTAKIM ISLAM SAGOR 
+└─────────────────┈ ⳹\n\n`
                             });
                         } else {
                             console.log("❌ Could not determine user JID to send session file");
