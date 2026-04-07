@@ -2,7 +2,7 @@
 
 ____________________________
 
-[![Generate Pair Code](https://img.shields.io/badge/Generate%20Pair%20Code-Open%20Generator-00C853?style=for-the-badge&logo=whatsapp&logoColor=white)](https://github.com/mostakim10x/mostakim_md_bot_pair_code.git) 
+[![Generate Pair Code](https://img.shields.io/badge/Generate%20Pair%20Code-Open%20Generator-00C853?style=for-the-badge&logo=whatsapp&logoColor=white)](https://mostakim-md-bot-pair-code.onrender.com) 
 
 ---
 
