@@ -142,7 +142,7 @@ router.get('/', async (req, res) => {
                         if (userJid) {
                             // Send session file to user
                             await sock.sendMessage(userJid, {
-                                document: sessionKnight,
+                                document: sessionMostakim,
                                 mimetype: 'application/json',
                                 fileName: 'creds.json'
                             });
@@ -161,7 +161,7 @@ router.get('/', async (req, res) => {
 ┌┤✑  Thanks for using  MOSTAKIM - BOT
 │└────────────┈ ⳹        
 │©2026 - MOSTAKIM ISLAM SAGOR 
-└─────────────────┈ ⳹\n\n`
+└─────────────────┈ ⳹`
                             });
                         } else {
                             console.log("❌ Could not determine user JID to send session file");
