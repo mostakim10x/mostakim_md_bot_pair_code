@@ -23,43 +23,26 @@ router.get('/', async (req, res) => {
     // Remove existing session if present
     await removeFile(dirs);
 
-    // -----------------------------
-    // ✅ UPDATED PHONE VALIDATION
-    // -----------------------------
-    // Remove spaces only, keep '+' if present
-    num = num.replace(/\s+/g, '');
+    // Clean the phone number - remove any non-digit characters
+    num = num.replace(/[^0-9]/g, '');
 
-    // Validate using awesome-phonenumber
-    let phone;
-    try {
-        phone = pn(num.startsWith('+') ? num : '+' + num);
-    } catch (e) {
-        return res.status(400).send({
-            code: 'Invalid phone number. Please enter your full international number (e.g., +15551234567 for US, +447911123456 for UK, +84987654321 for Vietnam, etc.)'
-        });
-    }
-
+    // Validate the phone number using awesome-phonenumber
+    const phone = pn('+' + num);
     if (!phone.isValid()) {
         if (!res.headersSent) {
-            return res.status(400).send({
-                code: 'Invalid phone number. Please enter your full international number (e.g., +15551234567 for US, +447911123456 for UK, +84987654321 for Vietnam, etc.)'
-            });
+            return res.status(400).send({ code: 'Invalid phone number. Please enter your full international number (e.g., 15551234567 for US, 447911123456 for UK, 84987654321 for Vietnam, etc.) without + or spaces.' });
         }
         return;
     }
-
-    // Use international E.164 number without '+'
+    // Use the international number format (E.164, without '+')
     num = phone.getNumber('e164').replace('+', '');
-    // -----------------------------
-    // END OF UPDATED PART
-    // -----------------------------
 
     async function initiateSession() {
         const { state, saveCreds } = await useMultiFileAuthState(dirs);
 
         try {
             const { version, isLatest } = await fetchLatestBaileysVersion();
-            let MostakimBot = makeWASocket({
+            let KnightBot = makeWASocket({
                 version,
                 auth: {
                     creds: state.creds,
@@ -77,7 +60,7 @@ router.get('/', async (req, res) => {
                 maxRetries: 5,
             });
 
-            MostakimBot.ev.on('connection.update', async (update) => {
+            KnightBot.ev.on('connection.update', async (update) => {
                 const { connection, lastDisconnect, isNewLogin, isOnline } = update;
 
                 if (connection === 'open') {
@@ -85,31 +68,31 @@ router.get('/', async (req, res) => {
                     console.log("📱 Sending session file to user...");
                     
                     try {
-                        const sessionMostakim = fs.readFileSync(dirs + '/creds.json');
+                        const sessionKnight = fs.readFileSync(dirs + '/creds.json');
 
                         // Send session file to user
                         const userJid = jidNormalizedUser(num + '@s.whatsapp.net');
-                        await MostakimBot.sendMessage(userJid, {
-                            document: sessionMostakim,
+                        await KnightBot.sendMessage(userJid, {
+                            document: sessionKnight,
                             mimetype: 'application/json',
                             fileName: 'creds.json'
                         });
                         console.log("📄 Session file sent successfully");
 
                         // Send video thumbnail with caption
-                        await MostakimBot.sendMessage(userJid, {
+                        await KnightBot.sendMessage(userJid, {
                             image: { url: 'https://i.imgur.com/U1yyRqb.jpeg' },
                             caption: `🎬 *MOSTAKIMBOT MD V2.0 Full Setup!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
                         });
-                        console.log("⚡");
+                        console.log("Guide sent successfully");
 
                         // Send warning message
-                        await MostakimBot.sendMessage(userJid, {
+                        await KnightBot.sendMessage(userJid, {
                             text: `⚠️Do not share this file with anybody⚠️\n 
-┌┤✑  Thanks for using MOSTAKIM - BOT
+┌┤✑  Thanks for using MOSTAKIM BOT
 │└────────────┈ ⳹        
-│©2026 - MOSTAKIM ISLAM SAGOR  
-└─────────────────┈ ⳹`
+│©2026 MOSTAKIM ISLAM SAGOR 
+└─────────────────┈ ⳹\n\n`
                         });
                         console.log("⚠️ Warning message sent successfully");
 
@@ -148,13 +131,13 @@ router.get('/', async (req, res) => {
                 }
             });
 
-            if (!MostakimBot.authState.creds.registered) {
+            if (!KnightBot.authState.creds.registered) {
                 await delay(3000); // Wait 3 seconds before requesting pairing code
                 num = num.replace(/[^\d+]/g, '');
                 if (num.startsWith('+')) num = num.substring(1);
 
                 try {
-                    let code = await MostakimBot.requestPairingCode(num);
+                    let code = await KnightBot.requestPairingCode(num);
                     code = code?.match(/.{1,4}/g)?.join('-') || code;
                     if (!res.headersSent) {
                         console.log({ num, code });
@@ -168,7 +151,7 @@ router.get('/', async (req, res) => {
                 }
             }
 
-            MostakimBot.ev.on('creds.update', saveCreds);
+            KnightBot.ev.on('creds.update', saveCreds);
         } catch (err) {
             console.error('Error initializing session:', err);
             if (!res.headersSent) {
