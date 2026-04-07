@@ -23,19 +23,36 @@ router.get('/', async (req, res) => {
     // Remove existing session if present
     await removeFile(dirs);
 
-    // Clean the phone number - remove any non-digit characters
-    num = num.replace(/[^0-9]/g, '');
+    // -----------------------------
+    // ✅ UPDATED PHONE VALIDATION
+    // -----------------------------
+    // Remove spaces only, keep '+' if present
+    num = num.replace(/\s+/g, '');
 
-    // Validate the phone number using awesome-phonenumber
-    const phone = pn('+' + num);
+    // Validate using awesome-phonenumber
+    let phone;
+    try {
+        phone = pn(num.startsWith('+') ? num : '+' + num);
+    } catch (e) {
+        return res.status(400).send({
+            code: 'Invalid phone number. Please enter your full international number (e.g., +15551234567 for US, +447911123456 for UK, +84987654321 for Vietnam, etc.)'
+        });
+    }
+
     if (!phone.isValid()) {
         if (!res.headersSent) {
-            return res.status(400).send({ code: 'Invalid phone number. Please enter your full international number (e.g., 15551234567 for US, 447911123456 for UK, 84987654321 for Vietnam, etc.) without + or spaces.' });
+            return res.status(400).send({
+                code: 'Invalid phone number. Please enter your full international number (e.g., +15551234567 for US, +447911123456 for UK, +84987654321 for Vietnam, etc.)'
+            });
         }
         return;
     }
-    // Use the international number format (E.164, without '+')
+
+    // Use international E.164 number without '+'
     num = phone.getNumber('e164').replace('+', '');
+    // -----------------------------
+    // END OF UPDATED PART
+    // -----------------------------
 
     async function initiateSession() {
         const { state, saveCreds } = await useMultiFileAuthState(dirs);
