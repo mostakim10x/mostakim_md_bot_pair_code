@@ -82,7 +82,7 @@ router.get('/', async (req, res) => {
                         // Send video thumbnail with caption
                         await MostakimBot.sendMessage(userJid, {
                             image: { url: 'https://i.imgur.com/U1yyRqb.jpeg' },
-                            caption: `🎬 *MOSTAKIMBOT MD V2.0 Full Setup!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat\n`
+                            caption: `🎬 *MOSTAKIMBOT MD V2.0 Full Setup!*\n\n🚀 Bug Fixes + New Commands + Fast AI Chat`
                         });
                         console.log("⚡");
 
@@ -92,7 +92,7 @@ router.get('/', async (req, res) => {
 ┌┤✑  Thanks for using MOSTAKIM - BOT
 │└────────────┈ ⳹        
 │©2026 - MOSTAKIM ISLAM SAGOR  
-└─────────────────┈ ⳹\n\n`
+└─────────────────┈ ⳹`
                         });
                         console.log("⚠️ Warning message sent successfully");
 
